@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 283 47% 2%;
+    --foreground: 283 27% 98%;
+    --muted: 283 13% 8%;
+    --muted-foreground: 283 4% 63%;
+    --popover: 283 47% 2%;
+    --popover-foreground: 283 27% 98%;
+    --card: 283 47% 3%;
+    --card-foreground: 283 27% 99%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --primary: 283 93% 25%;
+    --primary-foreground: 283 93% 85%;
+    --secondary: 283 18% 12%;
+    --secondary-foreground: 283 18% 72%;
+    --accent: 283 25% 17%;
+    --accent-foreground: 283 25% 77%;
+    --destructive: 4 84% 49%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 283 93% 25%;
+  }
+}
+
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
+  #root{
+    @apply p-0 m-0;
+  }
+  @keyframes slideIn{
+    0%{
+      transform: translateY(50%);
+      opacity: 0;
+    }
+    100%{
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes slideOut{
+    0%{
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100%{
+      transform: translateY(50%);
+      opacity: 0;
+    }
+  }
+  @keyframes fadeOut{
+    0%{
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100%{
+      opacity: 0;
+      transform: translate(-50%);
+    }
+    
+  }
+}
+
+
+
