@@ -2,39 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import './index.css'
 import {Slide} from './components/slide.jsx'
-import {NoteElement} from './components/note.jsx'
+import {Modal} from './components/modal.jsx'
+import {Page} from './components/page.jsx'
 // Note app
 
-function ButtonBack({onClick}){
-  return(
-    <div className='size-fit'
-    onClick={onClick}>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 cursor-pointer text-foreground">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-          </svg>
-        </div>
-  )
-}
-
-
-function Modal({onClick}){
-  // trouver un moyen de stocker le contenu du textarea et title
-
-  return(
-    <div className='fixed z-50 top-0 left-0 w-full h-full bg-background '>
-      <header className='sticky flex top-0 p-5 items-center border-b border-border'>
-        <ButtonBack onClick={onClick}/>
-        <input className='text-4xl pl-5 text-secondary-foreground border-none bg-transparent focus:outline-none' type='text' placeholder='Title...' />
-      </header>
-      <main className='flex flex-col h-full w-full '>
-        <div className='w-full p-5'>
-          <textarea className='w-full h-[80vh] p-5 rounded-md text-xl text-secondary-foreground bg-transparent focus:outline-none resize-none border border-border'
-           placeholder='Content...'/>
-        </div>
-      </main>
-    </div>
-  )
-}
 
 function AddNoteButton({onClick}){
   return(
@@ -50,64 +21,6 @@ function AddNoteButton({onClick}){
 
 
 
-
-function Main({onClick}){
-  return(
-    <main className='flex flex-col items-center justify-center w-full'>
-      <div className='grid grid-cols-1 w-full pt-10 m-5 h-full sm:grid-cols-2 lg:grid-cols-4'>
-        <NoteElement onClick={onClick}/>
-        <NoteElement onClick={onClick}/>
-        <NoteElement onClick={onClick}/>
-        <NoteElement onClick={onClick}/>
-      </div>
-    </main>
-  )
-}
-
-function MenuButton(){
-  return(
-    <button className=' flex items-center justify-center'>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-8">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-      </svg>
-    </button>
-  )
-}
-
-function SearchBar(){
-  return(
-    <button className='flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground'>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 rounded-full bg-primary text-primary-foreground">
-        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-      </svg>
-    </button>
-
-  )
-}
-
-function Page({onClick}){
-    return(
-      <>
-        <Header/>
-        <Main onClick={onClick}/>
-      </>
-    )
-}
-
-function Header() {
-  return (
-    <header className='sticky top-0 flex flex-row items-center justify-center w-full bg-background p-5'>
-      <div className='flex w-full'>
-        <MenuButton/>
-        <div className='text-center w-full lg:w-fit'>
-          <h1 className='text-4xl w-full lg:pl-20'>Notes</h1>
-        </div>
-      </div>
-      <SearchBar/>
-    </header>
-    
-  )
-}
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isPageOpen, setIsPageOpen] = useState(true)
@@ -119,7 +32,39 @@ export default function App() {
       stateDict.y = -50;
       stateDict.opacity = 0;
     }
+
   };
+
+  const [notes, setNotes] = useState([]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    toggleModal();
+    const form = e.target;
+    const formData = new FormData(form);
+    let title = formData.get('title');
+    const content = formData.get('content');
+    const date = new Date();
+    const today = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    if (!title & !content ) {
+      return;
+    } else if (!title) {
+      title =`Note of ${today}`;
+    }
+    handleAddNote({
+      title,
+      content,
+      date
+    });
+    console.log(notes)
+  };
+
+  
+  const handleAddNote=(noteContent) => {
+    setNotes([...notes, noteContent]);
+  }
+
+
   return (
     <div className='flex flex-col p-0'>
       <Slide visible={isPageOpen} from={{opacity: 1,x:0,y:-50}} animateEnter>
@@ -128,12 +73,12 @@ export default function App() {
         
       { isModalOpen && <Slide visible={!!isModalOpen} duration={300} 
         from={{opacity: 0,x:0,y:50}} >
-        <Modal onClick={toggleModal} />
+        <Modal onSubmit={handleSubmit} />
       </Slide>
       }
       {isPageOpen && <Slide visible={isPageOpen} duration={300} 
       from={{opacity: stateDict.opacity,x:0,y:stateDict.y}}>
-        <Page onClick={toggleModal}/>
+        <Page onClick={toggleModal} notes={notes}/>
         </Slide>}
         
     </div>
