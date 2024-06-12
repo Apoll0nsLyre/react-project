@@ -10,7 +10,7 @@ export function Slide({
     children,
     visible,
     duration = 300,
-    from = {opacity: 0},
+    from ,
     animateEnter = true}){
         const childRef = useRef(children);
         const [state, setState] = useState(
@@ -34,10 +34,8 @@ export function Slide({
             return () =>
                  clearTimeout(timer);
         } else if (state === ENTERING){
-        document.body.offsetHeight;
-        setState(VISIBLE);
-    }
-    }, [state]);
+            setState(VISIBLE);
+    }}, [state]);
 
     if (state === HIDDEN){
         return null;
