@@ -10,7 +10,7 @@ export function Slide({
     children,
     visible,
     duration = 300,
-    from ,
+    from,
     animateEnter = true}){
         const childRef = useRef(children);
         const [state, setState] = useState(
@@ -43,13 +43,13 @@ export function Slide({
 
     let style = {
         transitionDuration: `${duration}ms`,
-        transitionProperty : 'opacity, transform',
+        transitionProperty : 'opacity transform',
     };
     if (state !== VISIBLE){
         if (from.opacity!==undefined){
             style.opacity = from.opacity;
         }
-        style.transform = `translateY( ${from.y ?? 0}px)`; 
+        style.transform = `translate(${from.x || 0}px, ${from.y || 0}px)`;
     }
 
     return(

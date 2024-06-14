@@ -1,5 +1,6 @@
 import React from "react";
 import {useState, useEffect} from 'react';
+import { Slide } from "./slide.jsx";
 
 function MenuButton(){
     return(
@@ -16,7 +17,7 @@ const HIDDEN = 2;
 const ENTERING = 3;
 const LEAVING = 4;
 
-function SelectMenu({visible,from, animateEnter=true}){
+function SelectMenu({visible,from,duration, animateEnter=true}){
 
   const [state, setState] = useState(
     visible ? (animateEnter ? ENTERING : VISIBLE) : HIDDEN);
@@ -33,7 +34,7 @@ function SelectMenu({visible,from, animateEnter=true}){
     if (state === LEAVING){
       const timer = setTimeout(() => {
         setState(HIDDEN);
-      }, 300);
+      }, duration);
       return () => clearTimeout(timer);
     } else if (state === ENTERING){
       setState(VISIBLE);
@@ -45,7 +46,7 @@ function SelectMenu({visible,from, animateEnter=true}){
   }
 
   let style = {
-    transitionDuration: `300ms`,
+    transitionDuration: `${duration}ms`,
     transitionProperty: 'opacity, transform',
   };
   if (state !== VISIBLE){
@@ -77,9 +78,9 @@ function KebabMenu({onClick}){
     )
 }
 
-function SearchBar(){
+function SearchButton(onClick){
     return(
-      <button className='flex items-center justify-center size-10 rounded-full bg-primary text-primary-foreground'>
+      <button onClick={onClick} className='flex items-center justify-center size-10 rounded-full hover:bg-accent duration-200'>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7 ">
           <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
         </svg>
@@ -90,8 +91,21 @@ function SearchBar(){
 
 export function Header(notes){
   const [isSelectMenuOpen, setIsSelectMenuOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
   const toggleSelectMenu = () => {
-    setIsSelectMenuOpen(!isSelectMenuOpen);
+    if (isSelectMenuOpen){
+      setVisible(!visible);
+      setTimeout(() => {
+        setIsSelectMenuOpen(!isSelectMenuOpen);
+      }, 300);
+    }else{
+      setIsSelectMenuOpen(!isSelectMenuOpen);
+      setVisible(!visible);
+    }
+  }
+  const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
+  const toggleSearchBar = () => {
+    setIsSearchBarOpen(!isSearchBarOpen);
   }
   return (
     <header className='sticky top-0 flex flex-row items-center justify-center w-full bg-background p-5'>
@@ -102,11 +116,12 @@ export function Header(notes){
           {notes.notes.length > 0 ? <p className='text-xl items-center w-full align-baseline text-muted-foreground italic mt-auto lg:pl-10'>{notes.notes.length} notes</p> : <p className='text-sm'>No notes</p>}
         </div>
       </div>
-      <div className="flex gap-x-2">
-        <SearchBar/>
+      <div className="absolute top-5 right-5 flex gap-x-2 flex-col sm:flex-row">
+        <SearchButton onClick={toggleSearchBar}/>
         <KebabMenu onClick={toggleSelectMenu}/>
       </div>
-      {isSelectMenuOpen && <SelectMenu visible={isSelectMenuOpen} from={{opacity:0 ,x:-20, y:20}}/>}
+      {isSelectMenuOpen && <SelectMenu visible={visible}
+      duration={200} from={{opacity:0 ,x:-20, y:20}}/>}
     </header>
     
   )

@@ -139,6 +139,8 @@ export default function App() {
     window.localStorage.setItem('notes', JSON.stringify(notes));
   },[notes]);
 
+  
+
   return (
     <div className='flex flex-col p-0'>
       <Slide visible={isPageOpen} from={{opacity: 1,x:0,y:-50}} animateEnter>
