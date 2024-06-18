@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  /* :root {
+/* @layer base {
+  :root {
     --background: 283 47% 2%;
     --foreground: 283 27% 98%;
     --muted: 283 13% 8%;
@@ -23,7 +23,7 @@
     --destructive: 4 84% 49%;
     --destructive-foreground: 0 0% 100%;
     --ring: 283 93% 25%;
-  } */
+  }
   :root {
     --background: 283 36% 98%;
     --foreground: 283 68% 2%;
@@ -46,6 +46,58 @@
     --ring: 283 93% 25%;
     --radius: 0.5rem;
   }
+} */
+
+@layer base {
+  /* :root {
+    --background: 2 44% 99%;
+    --foreground: 2 70% 4%;
+    --muted: 2 39% 89%;
+    --muted-foreground: 2 8% 35%;
+    --popover: 2 44% 98%;
+    --popover-foreground: 2 70% 3%;
+    --card: 2 44% 98%;
+    --card-foreground: 2 70% 3%;
+    --border: 2 12% 89%;
+    --input: 2 12% 89%;
+    --primary: 2 63% 22%;
+    --primary-foreground: 2 63% 82%;
+    --secondary: 2 19% 84%;
+    --secondary-foreground: 2 19% 24%;
+    --accent: 2 19% 84%;
+    --accent-foreground: 2 19% 24%;
+    --destructive: 19 93% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 2 63% 22%;
+    --radius: 0.5rem;
+  } */
+
+  :root {
+    --background: 2 40% 2%;
+    --foreground: 2 17% 99%;
+    --muted: 2 39% 11%;
+    --muted-foreground: 2 8% 65%;
+    --popover: 2 40% 3%;
+    --popover-foreground: 0 0% 100%;
+    --card: 2 40% 3%;
+    --card-foreground: 0 0% 100%;
+    --border: 2 12% 14%;
+    --input: 2 12% 14%;
+    --primary: 2 63% 22%;
+    --primary-foreground: 2 63% 82%;
+    --secondary: 2 20% 13%;
+    --secondary-foreground: 2 20% 73%;
+    --accent: 2 20% 13%;
+    --accent-foreground: 2 20% 73%;
+    --destructive: 19 93% 53%;
+    --destructive-foreground: 0 0% 0%;
+    --ring: 2 63% 22%;
+  }
+  .shadow-bottom {
+    -moz-box-shadow:inset  0 -10px 10px -10px var(--card);
+    -webkit-box-shadow: inset  0 -10px 10px -10px var(--card);
+    box-shadow:inset  0 -10px 10px -10px var(--card);
+}
 }
 
 

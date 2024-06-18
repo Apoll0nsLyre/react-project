@@ -1,6 +1,6 @@
 import React from "react";
-import {useState, useEffect} from 'react';
-import { Slide } from "./slide.jsx";
+import {useState, useEffect, useRef} from 'react';
+import { Slide } from "./slide";
 
 function MenuButton(){
     return(
@@ -17,7 +17,7 @@ const HIDDEN = 2;
 const ENTERING = 3;
 const LEAVING = 4;
 
-function SelectMenu({visible,from,duration, animateEnter=true}){
+function SelectMenu({visible,from,duration, animateEnter=true, properties={property:"opacity, transform"} }){
 
   const [state, setState] = useState(
     visible ? (animateEnter ? ENTERING : VISIBLE) : HIDDEN);
@@ -47,7 +47,7 @@ function SelectMenu({visible,from,duration, animateEnter=true}){
 
   let style = {
     transitionDuration: `${duration}ms`,
-    transitionProperty: 'opacity, transform',
+    transitionProperty: properties.property,
   };
   if (state !== VISIBLE){
     if (from.opacity !== undefined){
@@ -57,9 +57,9 @@ function SelectMenu({visible,from,duration, animateEnter=true}){
   }
 
   return (
-    <div style={style} className="z-50 absolute right-12 top-14 bg-background text-accent-foreground border-border text-lg text-center rounded-2xl cursor-pointer
+    <div style={style} id="select-menu" className="z-50 absolute right-7 top-9 bg-background text-popover-foreground border-border text-lg text-center rounded-2xl cursor-pointer
       border-2">
-      <ul className="">
+      <ul id="select-menu" className="">
         <li className="hover:bg-accent px-5 py-2 rounded-t-xl duration-200">Edit</li>
         <li className="hover:bg-accent px-5 py-2 rounded-b-xl duration-200">Display</li>
       </ul>
@@ -70,15 +70,15 @@ function SelectMenu({visible,from,duration, animateEnter=true}){
 function KebabMenu({onClick}){
     
     return(
-      <button onClick={onClick} className='flex items-center justify-center size-10 rounded-full hover:bg-accent duration-200'>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+      <button id="select-menu"  onClick={onClick} className='flex items-center justify-center size-10 rounded-full hover:bg-accent duration-200'>
+        <svg id="select-menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7">
+          <path id="select-menu" strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
         </svg>
       </button>
     )
 }
 
-function SearchButton(onClick){
+function SearchButton({onClick}){
     return(
       <button onClick={onClick} className='flex items-center justify-center size-10 rounded-full hover:bg-accent duration-200'>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7 ">
@@ -89,26 +89,59 @@ function SearchButton(onClick){
     )
 }
 
+function SearchBar(){
+    return(
+      <div className='flex items-center justify-center '>
+        <input className='w-60 h-10 rounded-full bg-input text-left text-secondary-foreground focus:outline-none pl-5 pr-5' type='text' placeholder='Search...'/>
+      </div>
+    )
+}
+
 export function Header(notes){
   const [isSelectMenuOpen, setIsSelectMenuOpen] = useState(false);
   const [visible, setVisible] = useState(false);
+  
+  const [visibleSearchBar, setVisibleSearchBar] = useState(false);
+  const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
+  const toggleSearchBar = () => {
+    if (isSearchBarOpen){
+      setVisibleSearchBar(!visibleSearchBar);
+      setTimeout(() => {
+        setIsSearchBarOpen(!isSearchBarOpen);
+      }, 300);
+    } else {
+      setIsSearchBarOpen(!isSearchBarOpen);
+      setVisibleSearchBar(!visibleSearchBar);
+    }
+  };
+
   const toggleSelectMenu = () => {
     if (isSelectMenuOpen){
       setVisible(!visible);
       setTimeout(() => {
         setIsSelectMenuOpen(!isSelectMenuOpen);
       }, 300);
-    }else{
+    } else {
       setIsSelectMenuOpen(!isSelectMenuOpen);
       setVisible(!visible);
     }
-  }
-  const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
-  const toggleSearchBar = () => {
-    setIsSearchBarOpen(!isSearchBarOpen);
-  }
+  };
+  const menuRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!menuRef.current.contains(event.target)){
+        setVisible(false);
+        setTimeout(() => {
+          setIsSelectMenuOpen(false);
+        }, 300);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [menuRef]);
   return (
-    <header className='sticky top-0 flex flex-row items-center justify-center w-full bg-background p-5'>
+    <header className='sticky top-0 flex flex-row items-center justify-center w-full p-5 backdrop-blur-sm'>
+      <div className="absolute w-[inherit] -z-10 bg-background opacity-50 h-full"></div>
       <div className='flex w-full'>
         <MenuButton/>
         <div className='text-center w-full lg:w-fit lg:flex '>
@@ -117,11 +150,16 @@ export function Header(notes){
         </div>
       </div>
       <div className="absolute top-5 right-5 flex gap-x-2 flex-col sm:flex-row">
-        <SearchButton onClick={toggleSearchBar}/>
-        <KebabMenu onClick={toggleSelectMenu}/>
+        <div ref={menuRef} className="flex gap-x-2">
+          {isSearchBarOpen && <SearchBar/>}
+          <SearchButton onClick={toggleSearchBar}/>
+        </div>
+        <div ref={menuRef} className="flex gap-x-2">
+          <KebabMenu onClick={toggleSelectMenu}/>
+          {isSelectMenuOpen && <SelectMenu visible={visible}
+            duration={200} from={{opacity:0 ,x:-20, y:20}}/>}
+        </div>
       </div>
-      {isSelectMenuOpen && <SelectMenu visible={visible}
-      duration={200} from={{opacity:0 ,x:-20, y:20}}/>}
     </header>
     
   )

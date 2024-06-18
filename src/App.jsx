@@ -2,15 +2,17 @@ import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import './index.css'
 import {Slide} from './components/slide.jsx'
-import {Modal} from './components/modal.jsx'
+import {Modal, DeleteModal} from './components/modal.jsx'
 import {Page} from './components/page.jsx'
+
 import { v4 as uuidv4 } from 'uuid';
+
 // Note app
 
 
 function AddNoteButton({onClick}){
   return(
-      <button type='button' className='fixed z-50 right-10 bottom-10 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground
+      <button type='button' className='fixed z-10 right-10 bottom-10 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground
       shadow-md shadow-primary hover:shadow-none ease-in-out duration-150'
       onClick={onClick}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-8">
@@ -36,6 +38,7 @@ export default function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isPageOpen, setIsPageOpen] = useState(true)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   let stateDict = useRef({y: 0, opacity: 1}).current;
   const toggleModal = (e) => {
     const noteClicked = e ? e.target.parentElement.id : null;
@@ -79,11 +82,18 @@ export default function App() {
     const hours = time.getHours().toString().padStart(2, '0');
     const minutes = time.getMinutes().toString().padStart(2, '0');
     const date = hours + ':' + minutes;
+    const today = new Date().getDay();
     const key = currentNote.key ? currentNote.key : uuidv4();
     if (!title & !content ) {
       return;
-    } else if (!title) {
+    } else if (title === '') {
       title =`Note of ${today}`;
+      handleAddNote({
+        title,
+        content,
+        key,
+        date
+      });
     } else if (key === currentNote.key) {
       const newNotes = notes.map((note) => {
         if (note.key === key) {
@@ -139,17 +149,30 @@ export default function App() {
     window.localStorage.setItem('notes', JSON.stringify(notes));
   },[notes]);
 
-  
+  const toggleDeleteModal = () => {
+    setIsDeleteModalOpen(!isDeleteModalOpen);
+  };
+
+  const handleDelete = () => {
+    const key = currentNote.key;
+    const newNotes = notes.filter((note) => note.key !== key);
+    setNotes(newNotes);
+    toggleDeleteModal();
+    toggleModal();
+  }
 
   return (
     <div className='flex flex-col p-0'>
       <Slide visible={isPageOpen} from={{opacity: 1,x:0,y:-50}} animateEnter>
         <AddNoteButton onClick={toggleModal}/>
       </Slide>
-
+      {isDeleteModalOpen && <Slide visible={isDeleteModalOpen} from={{opacity: 0,x:0,y:0}} animateEnter className={'z-40'}>
+        <DeleteModal onClick={toggleDeleteModal} onDelete={handleDelete}/>
+      </Slide>}
+      
       { isModalOpen && <Slide visible={!!isModalOpen} duration={300}
         from={{opacity: 0,x:0,y:50}} >
-        <Modal onSubmit={handleSubmit} note={currentNote}/>
+        <Modal onSubmit={handleSubmit} onClick={toggleDeleteModal} note={currentNote}/>
       </Slide>
       }
       {isPageOpen && <Slide visible={isPageOpen} duration={300}

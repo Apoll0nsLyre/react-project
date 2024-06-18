@@ -7,8 +7,10 @@ const ENTERING = 3;
 const LEAVING = 4;
 
 export function Slide({
+    className='',
     children,
     visible,
+    properties={property:"opacity, transform"},
     duration = 300,
     from,
     animateEnter = true}){
@@ -43,7 +45,7 @@ export function Slide({
 
     let style = {
         transitionDuration: `${duration}ms`,
-        transitionProperty : 'opacity transform',
+        transitionProperty : properties.property,
     };
     if (state !== VISIBLE){
         if (from.opacity!==undefined){
@@ -53,7 +55,7 @@ export function Slide({
     }
 
     return(
-      <div style={style} >
+      <div style={style} className={className}>
         {childRef.current}
       </div>
     )

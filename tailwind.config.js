@@ -6,6 +6,20 @@ export default {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        // inside bottom
+        'inner-bottom': 'inset 0 -30px 30px -10px red',
+      },
+      keyframes: {
+        slideIn: {
+          '0%': {opacity: '0', transform: 'translateX(-100%)'},
+          '100%': {opacity: '1', transform: 'translateX(0)'},
+        },
+        slideOut: {
+          '0%': {opacity: '1', transform: 'translateX(0)'},
+          '100%': {opacity: '0', transform: 'translateX(-100%)'},
+        },
+      },  
       animation: {
         'slideIn' : 'slideIn 0.3s ease-in-out',
         'slideOut' : 'slideOut 0.3s ease-in-out',
