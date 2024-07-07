@@ -1,10 +1,9 @@
 import React from "react";
 import {useState, useEffect, useRef} from 'react';
-import { Slide } from "./slide";
 
 function MenuButton(){
     return(
-      <button className=' flex items-center justify-center'>
+      <button className='z-10 flex items-center justify-center'>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-8">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
         </svg>
@@ -70,7 +69,7 @@ function SelectMenu({visible,from,duration, animateEnter=true, properties={prope
 function KebabMenu({onClick}){
     
     return(
-      <button id="select-menu"  onClick={onClick} className='flex items-center justify-center size-10 rounded-full hover:bg-accent duration-200'>
+      <button id="select-menu"  onClick={onClick} className='z-10 right-5 flex items-center justify-center size-10 rounded-full hover:bg-accent duration-200'>
         <svg id="select-menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7">
           <path id="select-menu" strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
         </svg>
@@ -80,7 +79,7 @@ function KebabMenu({onClick}){
 
 function SearchButton({onClick}){
     return(
-      <button onClick={onClick} className='flex items-center justify-center size-10 rounded-full hover:bg-accent duration-200'>
+      <button onClick={onClick} className='z-10 flex items-center justify-center size-10 rounded-full hover:bg-accent duration-200'>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7 ">
           <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
         </svg>
@@ -91,8 +90,9 @@ function SearchButton({onClick}){
 
 function SearchBar(){
     return(
-      <div className='flex items-center justify-center '>
-        <input className='w-60 h-10 rounded-full bg-input text-left text-secondary-foreground focus:outline-none pl-5 pr-5' type='text' placeholder='Search...'/>
+      <div className='fixed top-0 left-[50%] -translate-x-1/2 h-full w-full flex items-center'>
+        <div className="backdrop-blur-sm opacity-50 bg-background w-full h-full absolute"></div>
+        <input className='z-10 h-10 rounded-full bg-input text-left text-secondary-foreground focus:outline-none pr-5 pl-5 mx-auto drop-shadow-md' type='text' placeholder='Search...'/>
       </div>
     )
 }
@@ -106,9 +106,7 @@ export function Header(notes){
   const toggleSearchBar = () => {
     if (isSearchBarOpen){
       setVisibleSearchBar(!visibleSearchBar);
-      setTimeout(() => {
-        setIsSearchBarOpen(!isSearchBarOpen);
-      }, 300);
+      setIsSearchBarOpen(!isSearchBarOpen);
     } else {
       setIsSearchBarOpen(!isSearchBarOpen);
       setVisibleSearchBar(!visibleSearchBar);
@@ -140,16 +138,17 @@ export function Header(notes){
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [menuRef]);
   return (
-    <header className='sticky top-0 flex flex-row items-center justify-center w-full p-5 backdrop-blur-sm'>
+    <header className='sticky top-0 flex flex-row items-center justify-center w-full h-28 p-5 backdrop-blur-sm'>
       <div className="absolute w-[inherit] -z-10 bg-background opacity-50 h-full"></div>
       <div className='flex w-full'>
         <MenuButton/>
         <div className='text-center w-full lg:w-fit lg:flex '>
           <h1 className='text-4xl w-full lg:pl-20'>Notes</h1>
-          {notes.notes.length > 0 ? <p className='text-xl items-center w-full align-baseline text-muted-foreground italic mt-auto lg:pl-10'>{notes.notes.length} notes</p> : <p className='text-sm'>No notes</p>}
+          {notes.notes.length > 0 ? <p className='text-xl items-center w-full align-baseline text-muted-foreground italic mt-auto lg:pl-10'>
+            {notes.notes.length} notes</p> : <p className='text-sm'>No notes</p>}
         </div>
       </div>
-      <div className="absolute top-5 right-5 flex gap-x-2 flex-col sm:flex-row">
+      <div className="relative flex gap-x-2 flex-col sm:flex-row">
         <div ref={menuRef} className="flex gap-x-2">
           {isSearchBarOpen && <SearchBar/>}
           <SearchButton onClick={toggleSearchBar}/>

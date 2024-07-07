@@ -8,8 +8,6 @@ import {Page} from './components/page.jsx'
 import { v4 as uuidv4 } from 'uuid';
 
 // Note app
-
-
 function AddNoteButton({onClick}){
   return(
       <button type='button' className='fixed z-10 right-10 bottom-10 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground
