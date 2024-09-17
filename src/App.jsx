@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import { setLocalStorageItem, getLocalStorageItem } from './data/data.jsx';
 import './App.css'
 
 
@@ -34,9 +35,14 @@ function SearchBar(){
   )
 }
 
-
 function App() {
-
+  const [notes, setNotes] = useState(() => getLocalStorageItem('notes') || []);
+  const [currentNote, setCurrentNote] = useState({
+    title: '',
+    content: '',
+    key: '',
+    date: ''
+  });
   return (
     <div className='flex flex-col min-h-screen'>
       <header className='flex h-[100px] bg-background w-full m-auto'>
@@ -52,15 +58,18 @@ function App() {
             <div className='flex justify-center items-center h-20'>
               <button className='bg-primary text-primary-foreground p-2 rounded-lg text-sm '>+ Add note</button>
             </div>
-            <div>
-
+            <div className='border-t-2'>
+              {notes.map((note) => (
+                <div key={note.key} className='flex flex-col p-4 border-b-2 border-border cursor-pointer'>
+                  <h2 className='text-xl'>{note.title}</h2>
+                </div>
+              ))}
             </div>
         </div>
         <div className='p-8 w-full '>
-          <form className=' h-full flex flex-col bg-card p-4'>
-            <label className='p-2 text-2xl' aria-label='title'>Titre</label>
-            <input type='text' name='title' className=' w-full h-10 rounded-md p-2 ' placeholder='Titre'/>
-            <textarea className=' flex-1 w-full rounded-md p-2 resize-none' placeholder='Contenu'/>
+          <form className=' h-full flex flex-col bg-card p-4 rounded-xl'>
+            <input type='text' name='title' className=' w-fit h-10  p-2 text-2xl border-b-2' placeholder='Titre'/>
+            <textarea className=' flex-1 w-full rounded-md p-4 resize-none' placeholder='Contenu'/>
           </form>
         </div>
       </div>
