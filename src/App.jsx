@@ -28,10 +28,11 @@ function Hamburger(){
   )
 }
 
-function SearchBar(){
+function SearchBar({searchNote}){
+
   return (
-    <div className='  flex justify-center items-center w-full '>
-      <input type='text' className='w-1/2 h-10 rounded-md p-2 bg-input ' placeholder='Search...'/>
+    <div className='  flex justify-center items-center w-full ' onChange={searchNote}>
+      <input type='text' className='w-1/2 h-10 rounded-md p-2 bg-input ' placeholder='Search...' />
     </div>
   )
 }
@@ -46,6 +47,7 @@ export default function App() {
       return [];
     }
   });
+  let [notesList, setNotesList] = useState(notes);
 
   const [currentNote, setCurrentNote] = useState(
     {
@@ -55,7 +57,7 @@ export default function App() {
       key: ''
     }
   );
-  const [clicked, setClicked] = useState(false);
+  const [clicked, setClicked] = useState("");
 
   const handleAddNote=(note) => {
     setNotes([...notes, note]);
@@ -91,7 +93,7 @@ const addNote = (e) => {
       key,
       date
     });
-  } else if (clicked) {
+  } else if (clicked === "clicked") {
     const newNotes = notes.map((note) => {
       if (note.key === currentNote.key) {
         note.title = title ;
@@ -120,29 +122,51 @@ const addNote = (e) => {
     key: '',
     date: ''
   });
+
 };
+// delete note
+const [deletedNotes, setDeletedNotes] = useState([]);
+const deleteNote = (e) => {
+  
+}
   // Notes clicked state 
   const clickedNote = (e) => {
     e.preventDefault();
+    if (e.target.classList.contains('delete-button')) {
+      console.log(e.target.classList);
+      const key = e.target.parentElement.id;
+      const newNotes = notes.filter((note) => note.key !== key);
+      setDeletedNotes([...deletedNotes, notes.find((note) => note.key === key)]);
+      setNotes(newNotes);
+      setCurrentNote({
+        title: '',
+        content: '',
+        key: '',
+        date: ''
+      });
+      return;
+    }
     const noteClicked = e ? e.target.id : '';
     const note = notes.find((note) => note.key === noteClicked);
-    const title = note ? note.title : '';
-    const content = note ? note.content : '';
-    const key = note ? note.key : '';
-    const date = note ? note.date : '';
-    if (note) {
+
+    if (note && note in deletedNotes) {
+      return;
+    }else {
+      const title = note ? note.title : '';
+      const content = note ? note.content : '';
+      const key = note ? note.key : '';
+      const date = note ? note.date : '';
       setCurrentNote({
         title,
         content,
         key,
         date
       });
-      setClicked(true);
     }
   };
 
+
     useEffect(() => {
-      console.log(notes, "get");
       const data = JSON.parse(localStorage.getItem('notes'));
       if (data) {
         setNotes(data);
@@ -150,32 +174,43 @@ const addNote = (e) => {
     },[]);
 
     useEffect(() => {
-      console.log(notes, "set");
       window.localStorage.setItem('notes', JSON.stringify(notes));
+      setNotesList(notes);
     },[notes]);
 
+    const searchNote = (e) => {
+      const search = e.target.value;
+      const filteredNotes = notes.filter((note) => {
+        if (note.title.toLowerCase().includes(search.toLowerCase())|| note.content.toLowerCase().includes(search.toLowerCase())) {
+          return note;
+        }
+      }
+    );
+    setNotesList(filteredNotes);
+    };
   return (
     <div className='flex flex-col min-h-screen'>
-      <header className='flex h-[100px] bg-background w-full m-auto'>
+      <header className='flex h-[100px] bg-background w-full m-auto shadow-xl shadow-black '>
         <div className='flex h-full w-full my-auto'>
           <Hamburger/>
           <h1 className='text-3xl my-auto text-left'>Notes</h1>
-          <SearchBar/>
+          <SearchBar searchNote={searchNote}/>
         </div>
       </header>
       <div className='flex flex-1 bg-border w-full h-full'>
         
-        <div className='bg-background w-[300px] border-t-2'>
-            <div className='flex justify-center items-center h-20'>
+        <div className='bg-background w-[300px]'>
+            {/* <div className='flex justify-center items-center h-20'>
               <button className='bg-primary text-primary-foreground p-2 rounded-lg text-sm '>New note</button>
-            </div>
-            <div className='border-t-2'>
-              {notes.map((note) => (
+            </div> */}
+            <div id="notes-container" className='border-t-2 overflow-auto h-[85vh]'>
+              {notesList.map((note) => (
                 <div id={note.key} key={note.key} className='flex flex-row p-4 border-b-2 border-border cursor-pointer w-full' onClick={clickedNote}>
                   <h2 id={note.key} className='text-xl w-full overflow-hidden'>{note.title}</h2>
-                  <div id={note.key} className='flex justify-end'>
-                    <svg id={note.key} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 text-destructive w-full">
-                      <path id={note.key} fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clipRule="evenodd" />
+                  <div id="delete-button"className=' flex justify-end z-20' onClick={deleteNote}>
+                    <svg id={note.key} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="delete-button size-6 text-destructive w-full">
+                      <path id={note.key} className='delete-button' fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25
+                       12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clipRule="evenodd" />
                     </svg>
                   </div>
                   
