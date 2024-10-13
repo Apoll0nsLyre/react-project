@@ -23,6 +23,7 @@ export default {
         accent: 'hsl(var(--accent))',
         'accent-foreground': 'hsl(var(--accent-foreground))',
         destructive: 'hsl(var(--destructive))',
+        'destructive-hover': 'hsl(var(--destructive-hover))',
         'destructive-foreground': 'hsl(var(--destructive-foreground))',
         ring: 'hsl(var(--ring))',
       },

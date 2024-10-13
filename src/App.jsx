@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import {DeleteModal} from './components/modal.jsx'
 import { setLocalStorageItem, getLocalStorageItem } from './data/data.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css'
@@ -126,29 +127,51 @@ const addNote = (e) => {
 };
 // delete note
 const [deletedNotes, setDeletedNotes] = useState([]);
-const deleteNote = (e) => {
-  
-}
+const [showModal, setShowModal] = useState(false);
+
+const cancelModal = (e) => {
+  e.preventDefault();
+  setShowModal(false);
+};
+
+const [keyToDelete, setKeyToDelete] = useState('');
+const deleteNote = () => {
+  const newNotes = notes.filter((note) => note.key !== keyToDelete);
+  setNotes(newNotes);
+  setDeletedNotes([...deletedNotes, currentNote]);
+  setShowModal(false);
+  setCurrentNote({
+    title: '',
+    content: '',
+    key: '',
+    date: ''
+  });
+  setClicked("");
+};
+
+// New note function
+const newNote = (e) => {
+  e.preventDefault();
+  setCurrentNote({
+    title: '',
+    content: '',
+    key: '',
+    date: ''
+  });
+  setClicked("");
+  console.log(currentNote);
+};
   // Notes clicked state 
   const clickedNote = (e) => {
     e.preventDefault();
-    if (e.target.classList.contains('delete-button')) {
-      console.log(e.target.classList);
-      const key = e.target.parentElement.id;
-      const newNotes = notes.filter((note) => note.key !== key);
-      setDeletedNotes([...deletedNotes, notes.find((note) => note.key === key)]);
-      setNotes(newNotes);
-      setCurrentNote({
-        title: '',
-        content: '',
-        key: '',
-        date: ''
-      });
-      return;
-    }
     const noteClicked = e ? e.target.id : '';
     const note = notes.find((note) => note.key === noteClicked);
-
+    if (e.target.classList.contains('delete-button')) {
+      setShowModal(true);
+      setKeyToDelete(note.key);
+      return;
+    }
+    setClicked("clicked");
     if (note && note in deletedNotes) {
       return;
     }else {
@@ -162,6 +185,7 @@ const deleteNote = (e) => {
         key,
         date
       });
+      setClicked("clicked");
     }
   };
 
@@ -185,11 +209,15 @@ const deleteNote = (e) => {
           return note;
         }
       }
+      
     );
     setNotesList(filteredNotes);
     };
   return (
     <div className='flex flex-col min-h-screen'>
+      { showModal &&
+        <DeleteModal onClick={deleteNote} cancelModal={cancelModal}/>
+      }
       <header className='flex h-[100px] bg-background w-full m-auto shadow-xl shadow-black '>
         <div className='flex h-full w-full my-auto'>
           <Hamburger/>
@@ -199,19 +227,19 @@ const deleteNote = (e) => {
       </header>
       <div className='flex flex-1 bg-border w-full h-full'>
         
-        <div className='bg-background w-[300px]'>
-            {/* <div className='flex justify-center items-center h-20'>
-              <button className='bg-primary text-primary-foreground p-2 rounded-lg text-sm '>New note</button>
-            </div> */}
-            <div id="notes-container" className='border-t-2 overflow-auto h-[85vh]'>
+        <div id='new-note' className='bg-background w-[300px]'>
+            <div className='flex justify-center items-center h-20'>
+              <button id='new-note' onClick={newNote} className='bg-primary text-primary-foreground p-2 rounded-lg text-sm hover:bg-white hover:text-black duration-150 border-2 border-black'>New note</button>
+            </div>
+            <div id="notes-container" className='border-t-2 overflow-auto h-[74vh]'>
               {notesList.map((note) => (
-                <div id={note.key} key={note.key} className='flex flex-row p-4 border-b-2 border-border cursor-pointer w-full' onClick={clickedNote}>
-                  <h2 id={note.key} className='text-xl w-full overflow-hidden'>{note.title}</h2>
-                  <div id="delete-button"className=' flex justify-end z-20' onClick={deleteNote}>
-                    <svg id={note.key} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="delete-button size-6 text-destructive w-full">
-                      <path id={note.key} className='delete-button' fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25
-                       12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clipRule="evenodd" />
+                <div id={note.key} key={note.key} className='flex flex-row border-b-2 border-border cursor-pointer w-full ' onClick={clickedNote}>
+                  <h2 id={note.key} className='text-xl w-full overflow-hidden p-4 hover:bg-secondary duration-150' >{note.title}</h2>
+                  <div id={note.key} className='delete-button flex justify-end z-20 bg-destructive hover:bg-destructive-hover hover:text-black text-destructive-foreground duration-150'>
+                    <svg id={note.key} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className=" delete-button w-8 m-auto">
+                      <path id={note.key} className='delete-button' strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
+
                   </div>
                   
                 </div>
@@ -220,8 +248,8 @@ const deleteNote = (e) => {
         </div>
         <div className='p-8 w-full ' onChange={onChangeNote}>
           <form id='note' className=' h-full flex flex-col bg-card p-4 rounded-xl' onSubmit={addNote}>
-            <input id='title' type='text' name='title' className=' w-fit h-10  p-2 text-2xl border-b-2' placeholder='Titre' defaultValue={currentNote ? currentNote.title :'' } />
-            <textarea id='content' name="content" className=' flex-1 w-full rounded-md p-4 resize-none' placeholder='Contenu' defaultValue={currentNote ? currentNote.content :'' }/>
+            <input  id='title' type='text' name='title' className=' w-fit h-10  p-2 text-2xl border-b-2' placeholder='Titre' defaultValue={currentNote ? currentNote.title :'' } />
+            <textarea required id='content' name="content" className=' flex-1 w-full rounded-md p-4 resize-none' placeholder='Contenu' defaultValue={currentNote ? currentNote.content :'' }/>
             <div className='flex justify-end'>
               <button type='submit' className='w-16 bg-primary text-primary-foreground p-2 mt-2 rounded-lg text-sm '>Save</button>
             </div>

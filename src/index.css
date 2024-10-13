@@ -21,7 +21,7 @@ body {
   background-color: #aaa; /* or add it to the track */
 }
 #notes-container::-webkit-scrollbar-thumb {
-  background-color: #2e2e2e; 
+  background-color: #7d7d7d; 
   border-radius: 5px;
 }
 
@@ -44,6 +44,7 @@ body {
       --accent: 0 0% 96.1%;
       --accent-foreground: 0 0% 9%;
       --destructive: 0 84.2% 60.2%;
+      --destructive-hover: 0 84.2% 50.2%;
       --destructive-foreground: 0 0% 98%;
       --ring: 0 0% 3.9%;
       --radius: 0.5rem;
