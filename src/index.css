@@ -11,8 +11,45 @@ body {
     padding: 0;
 }
 
+*{
+    transition-duration: 10ms;
+}
+
 *:focus {
     outline: none;
+}
+
+/* Animation fade-in */
+.fade-in {
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+    100% {
+        opacity: 1;
+        backdrop-filter: blur(4px);
+    }
+}
+
+/* Animation fade-out */
+.fade-out {
+    animation: fadeOut 0.2s ease-in-out;
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        backdrop-filter: blur(2px);
+    }
+    100% {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
 }
 
 #notes-container::-webkit-scrollbar {
@@ -21,7 +58,7 @@ body {
   background-color: #aaa; /* or add it to the track */
 }
 #notes-container::-webkit-scrollbar-thumb {
-  background-color: #7d7d7d; 
+  background-color: #888; 
   border-radius: 5px;
 }
 

@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import {DeleteModal} from './components/modal.jsx'
+import { Animation } from './components/animation.jsx';
 import { setLocalStorageItem, getLocalStorageItem } from './data/data.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css'
 
 
-function Button(){
+function Arrow({hideSearchModal}){
   return (
-    <div className='fixed z-10 p-4 right-10 bottom-10 bg-primary text-secondary rounded-full cursor-pointer'>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="md:size-9 size-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" onClick={hideSearchModal} className="size-6 cursor-pointer">
+        <path strokeLinecap="round"  strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
       </svg>
-    </div>
   )
 }
 
@@ -21,22 +18,40 @@ function Button(){
 
 function Hamburger(){
   return (
-      <div className='my-auto p-4 cursor-pointer'>
+    <div className='my-auto p-4 cursor-pointer'>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-10 ">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
         </svg>
-      </div>
+    </div>
+        
   )
 }
 
-function SearchBar({searchNote}){
+function SearchBar({searchNote, onClick, searchModal, hideSearchModal}){
 
   return (
-    <div className='  flex justify-center items-center w-full ' onChange={searchNote}>
-      <input type='text' className='w-1/2 h-10 rounded-md p-2 bg-input ' placeholder='Search...' />
+    <div className='flex justify-center items-center w-full z-10 '  onChange={searchNote}>
+      <input type='text' className='w-1/2 h-10 rounded-md p-2 bg-input shadow-md' onClick={onClick} placeholder='Search...' />
+      <div className='my-auto w-2 p-4'>
+        { searchModal && <Arrow hideSearchModal={hideSearchModal}/>}
+      </div>
     </div>
   )
 }
+
+function SearchResults({notes, clickedNote}){
+  return (
+          <div className=''>
+            <div className='absolute -z-10 top-0 left-0 w-full h-full backdrop-blur-[4px]'></div>
+            <div id="notes-container" className='border-t-2 m-auto overflow-auto h-[85vh] w-96 z-30'>
+              {notes.map((note) => (
+                <div id={note.key} key={note.key} onClick={clickedNote} className='cursor-pointer border border-border z-40 m-auto bg-background p-3 hover:bg-border duration-150 '>
+                  <h1 id={note.key} className='text-xl lg:text-xl text-center text-black text-wrap pb-2'>{note.title}</h1>
+                </div>))}
+              </div>
+            </div>
+  )
+};
 
 export default function App() {
 
@@ -163,7 +178,11 @@ const newNote = (e) => {
 };
   // Notes clicked state 
   const clickedNote = (e) => {
+    
     e.preventDefault();
+    if (searchModal) {
+      hideSearchModal();
+    }
     const noteClicked = e ? e.target.id : '';
     const note = notes.find((note) => note.key === noteClicked);
     if (e.target.classList.contains('delete-button')) {
@@ -213,45 +232,74 @@ const newNote = (e) => {
     );
     setNotesList(filteredNotes);
     };
+
+    const [searchModal, setSearchModal] = useState(false);
+    const showSearchModal = () => {
+      setSearchModal(true);
+      setFade('fade-in');
+    }
+
+    // Set timeout to hide search modal after 5 seconds
+    const [fade, setFade] = useState('fade-in');
+
+    const hideSearchModal = () => {
+      setFade('fade-out');
+      setTimeout(() => {
+        setSearchModal(false);
+      }
+      , 150);
+      
+    }
+
   return (
     <div className='flex flex-col min-h-screen'>
       { showModal &&
         <DeleteModal onClick={deleteNote} cancelModal={cancelModal}/>
       }
-      <header className='flex h-[100px] bg-background w-full m-auto shadow-xl shadow-black '>
+      <header className='flex h-[100px] bg-background w-full m-auto shadow-md '>
         <div className='flex h-full w-full my-auto'>
           <Hamburger/>
           <h1 className='text-3xl my-auto text-left'>Notes</h1>
-          <SearchBar searchNote={searchNote}/>
+          <SearchBar searchNote={searchNote} onClick={showSearchModal} searchModal={searchModal} hideSearchModal={hideSearchModal}/>
+          
         </div>
       </header>
-      <div className='flex flex-1 bg-border w-full h-full'>
+      <div className='relative flex flex-1 w-full h-full '>
+
+        {searchModal &&
+        <Animation className='absolute z-20 top-0 left-0 w-full h-full overflow-auto ' animation={fade}>
+          <SearchResults notes={notesList} clickedNote={clickedNote}/>
+        </Animation>
+        }
         
-        <div id='new-note' className='bg-background w-[300px]'>
+        <div id='new-note' className='bg-background w-[300px] shadow-lg'>
             <div className='flex justify-center items-center h-20'>
-              <button id='new-note' onClick={newNote} className='bg-primary text-primary-foreground p-2 rounded-lg text-sm hover:bg-white hover:text-black duration-150 border-2 border-black'>New note</button>
+              <button id='new-note' onClick={newNote} className='bg-primary shadow-lg text-primary-foreground p-2 rounded-lg text-sm hover:bg-border hover:text-black duration-150 '>New note</button>
             </div>
             <div id="notes-container" className='border-t-2 overflow-auto h-[74vh]'>
-              {notesList.map((note) => (
-                <div id={note.key} key={note.key} className='flex flex-row border-b-2 border-border cursor-pointer w-full ' onClick={clickedNote}>
-                  <h2 id={note.key} className='text-xl w-full overflow-hidden p-4 hover:bg-secondary duration-150' >{note.title}</h2>
-                  <div id={note.key} className='delete-button flex justify-end z-20 bg-destructive hover:bg-destructive-hover hover:text-black text-destructive-foreground duration-150'>
-                    <svg id={note.key} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className=" delete-button w-8 m-auto">
-                      <path id={note.key} className='delete-button' strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-
+              {notes.map((note) => (
+                <div id={note.key} key={note.key} className='flex flex-row border-b-2 border-border cursor-pointer w-full hover:bg-secondary shadow-md duration-150' onClick={clickedNote}>
+                  <h2 id={note.key} className='text-xl w-full overflow-hidden p-4 duration-150' >{note.title}</h2>
+                  <div id={note.key} className='flex justify-end z-10 duration-150'>
+                    <div className='delete-button rounded-full bg-destructive hover:text-black text-destructive-foreground m-auto p-2 mx-1 shadow-xl duration-150'>
+                      <svg id={note.key} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                      className="size-6 delete-button rounded-full m-auto ">
+                        <path id={note.key} strokeLinecap="round" className='delete-button' strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                      </svg>
+                    </div>
+                    
                   </div>
                   
                 </div>
               ))}
             </div>
         </div>
-        <div className='p-8 w-full ' onChange={onChangeNote}>
-          <form id='note' className=' h-full flex flex-col bg-card p-4 rounded-xl' onSubmit={addNote}>
+        <div className='m-8 w-full ' onChange={onChangeNote}>
+          <form id='note' className=' h-full flex flex-col bg-card p-4 rounded-xl shadow-xl' onSubmit={addNote}>
             <input  id='title' type='text' name='title' className=' w-fit h-10  p-2 text-2xl border-b-2' placeholder='Titre' defaultValue={currentNote ? currentNote.title :'' } />
             <textarea required id='content' name="content" className=' flex-1 w-full rounded-md p-4 resize-none' placeholder='Contenu' defaultValue={currentNote ? currentNote.content :'' }/>
             <div className='flex justify-end'>
-              <button type='submit' className='w-16 bg-primary text-primary-foreground p-2 mt-2 rounded-lg text-sm '>Save</button>
+              <button type='submit' className='w-16 bg-primary text-primary-foreground p-2 mt-2 rounded-lg text-sm shadow-lg hover:bg-border hover:text-primary duration-150'>Save</button>
             </div>
             
           </form>
