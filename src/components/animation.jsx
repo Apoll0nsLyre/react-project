@@ -1,8 +1,8 @@
 import { useState,useEffect } from "react";
-export function Animation({ children, className, animation }) {
+export function Animation({ children, id, className, animation }) {
     
     return (
-      <div className={className + ' ' + animation}>
+      <div id={id} className={className + ' ' + animation}>
         {children}
       </div>
     );
