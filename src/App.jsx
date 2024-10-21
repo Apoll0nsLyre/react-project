@@ -1,32 +1,15 @@
 import { useState, useEffect } from 'react'
 import {DeleteModal} from './components/modal.jsx'
 import { Animation } from './components/animation.jsx';
+import { NoteEditor } from './components/editor.jsx';
+import { Arrow, Hamburger } from './components/icons.jsx';
+import { NotesPage } from './components/notes.jsx';
 import { setLocalStorageItem, getLocalStorageItem } from './data/data.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css'
 
 
-function Arrow({hideSearchModal}){
-  return (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" onClick={hideSearchModal} className="size-8 cursor-pointer 
-      hover:text-white duration-150 ">
-        <path strokeLinecap="round"  strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
-      </svg>
-  )
-}
 
-
-
-function Hamburger({toggleMenu,className}){
-  return (
-    <div className={className}>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-10 ">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-        </svg>
-    </div>
-        
-  )
-}
 
 function SearchBar({searchNote, onClick, searchModal, hideSearchModal}){
 
@@ -42,60 +25,31 @@ function SearchBar({searchNote, onClick, searchModal, hideSearchModal}){
 
 function SearchResults({notes, clickedNote}){
   return (
-          <div className='text-foreground'>
-            <div className='absolute -z-10 top-0 left-0 w-full h-full backdrop-blur-[6px] '></div>
-            <div id="notes-container" className='m-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 overflow-auto h-[85vh] w-full z-30 '>
-              {notes.map((note) => (
-                <div id={note.key} key={note.key} onClick={clickedNote} className='flex  flex-col w-48 h-64 cursor-pointer border border-border z-40 m-auto my-2 bg-background
-                 text-foreground p-3 hover:bg-primary hover:text-primary-foreground duration-150 rounded-xl shadow-md shadow-black'>
-                  <h1 id={note.key} className='text-xl lg:text-xl text-center font-bold text-wrap pb-2 border-b-2 border-border'>{note.title}</h1>
-                  <p id={note.key} className='text-lg lg:text-md text-center text-wrap overflow-hidden h-full'>{note.content}</p>
-                  <div>
-                  <div id={note.key} className='flex justify-end z-10 duration-150'>
-                    <div className='delete-button rounded-full w-1/2 bg-destructive hover:text-black text-destructive-foreground m-auto p-2 mx-1 shadow-lg shadow-background duration-150'>
-                      <svg id={note.key} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                      className="size-6 delete-button rounded-full m-auto ">
-                        <path id={note.key} strokeLinecap="round" className='delete-button' strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                      </svg>
-                    </div>
-                    
-                  </div>
-                  </div>
-                </div>
-              ))}
+    <div className='text-foreground'>
+      <div className='absolute -z-10 top-0 left-0 w-full h-full backdrop-blur-[6px] '></div>
+      <div id="notes-container" className='m-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 overflow-auto h-[85vh] w-full z-30 '>
+        {notes.map((note) => (
+          <div id={note.key} key={note.key} onClick={clickedNote} className='flex  flex-col w-48 h-64 cursor-pointer border border-border z-40 m-auto my-2 bg-card
+            text-foreground p-3 hover:bg-primary hover:text-primary-foreground duration-150 rounded-xl shadow-md shadow-black'>
+            <h1 id={note.key} className='text-xl lg:text-xl text-center font-bold text-wrap pb-2 border-b-2 border-border'>{note.title}</h1>
+            <p id={note.key} className='text-lg lg:text-md text-center text-wrap overflow-hidden h-full'>{note.content}</p>
+            <div>
+            <div id={note.key} className='flex justify-end z-10 duration-150'>
+              <div id={note.key} className='delete-button rounded-full w-1/2 bg-destructive hover:text-black text-destructive-foreground m-auto p-2 mx-1 shadow-lg shadow-background duration-150'>
+                <svg id={note.key} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                className="size-6 delete-button rounded-full m-auto ">
+                  <path id={note.key} strokeLinecap="round" className='delete-button' strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
               </div>
+              
             </div>
+            </div>
+          </div>
+        ))}
+        </div>
+      </div>
   )
 };
-
-// function NotesPage({notes, clickedNote}){
-//   return (
-//     <div className='flex flex-col w-full h-full'>
-//       <div id="notes-container" className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 overflow-auto h-[85vh] w-full z-20 '>
-//         {notes.map((note) => (
-//           <div id={note.key} key={note.key} onClick={clickedNote} className='flex  flex-col w-56 h-64 cursor-pointer border border-border z-40 m-auto my-2 bg-background
-//            text-foreground p-3 hover:bg-primary hover:text-primary-foreground duration-150 rounded-xl shadow-md shadow-black'>
-//             <h1 id={note.key} className='text-xl lg:text-xl text-center font-bold text-wrap pb-2 border-b-2 border-border'>{note.title}</h1>
-//             <p id={note.key} className='text-lg lg:text-md text-center text-wrap overflow-hidden h-full'>{note.content}</p>
-//             <div>
-//             <div id={note.key} className='flex justify-end z-10 duration-150'>
-//               <div className='delete-button rounded-full w-1/2 bg-destructive hover:text-black text-destructive-foreground m-auto p-2 mx-1 shadow-lg shadow-background duration-150'>
-//               <svg id={note.key} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-//               className="size-6 delete-button rounded-full m-auto ">
-//                 <path id={note.key} strokeLinecap="round" className='delete-button' strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-//               </svg>
-//               </div>
-
-//             </div>
-//             </div>
-//           </div>
-//         ))}
-//         </div>
-//       </div>
-//   )
-// }
-
-
 
 export default function App() {
 
@@ -190,6 +144,7 @@ const [showModal, setShowModal] = useState(false);
 const cancelModal = (e) => {
   e.preventDefault();
   setShowModal(false);
+
 };
 
 const [keyToDelete, setKeyToDelete] = useState('');
@@ -226,6 +181,7 @@ const newNote = (e) => {
     if (searchModal) {
       hideSearchModal();
     }
+    
     const noteClicked = e ? e.target.id : '';
     const note = notes.find((note) => note.key === noteClicked);
     if (e.target.classList.contains('delete-button')) {
@@ -278,19 +234,21 @@ const newNote = (e) => {
 
     const [searchModal, setSearchModal] = useState(false);
     const showSearchModal = () => {
+      setFadeSearch('fade-in');
+      console.log(fade);
       setSearchModal(true);
-      setFade('fade-in');
     }
 
     // Set timeout to hide search modal after 5 seconds
-    const [fade, setFade] = useState('fade-in');
+    const [fade, setFade] = useState('');
+    const [fadeSearch, setFadeSearch] = useState('fade-in');  
 
     const hideSearchModal = () => {
-      setFade('fade-out');
+      setFadeSearch('fade-out');
+      console.log(fadeSearch);
       setTimeout(() => {
         setSearchModal(false);
-      }
-      , 100);
+      }, 140);
     }
     useEffect(() => {
       const noteColor = document.getElementsByClassName(`Note`);
@@ -301,21 +259,27 @@ const newNote = (e) => {
       if (note) {
         note.classList.add('bg-secondary');
       }
-      
-      
+
     }
     ,[currentNote]);
       
     // Notes pages toggle
     const [notesPage, setNotesPage] = useState(false);
-    const toggleNotesPage = () => {
-      setNotesPage(!notesPage);
-    };
+
+    const showNotesPage = () => {
+      setFade('fade-in');
+      console.log(fade);
+      setNotesPage(true);
+    }
+    const hideNotesPage = () => {
+      setNotesPage(false);
+    }
 
   return (
     <div className='flex flex-col min-h-screen bg-background'>
       { showModal &&
-        <DeleteModal onClick={deleteNote} cancelModal={cancelModal}/>
+        
+        <DeleteModal onClick={deleteNote} cancelModal={cancelModal} animation={fade}/>
       }
       <header className='flex h-[100px] bg-card w-full m-auto shadow-md shadow-black z-10 text-foreground'>
         <div className='flex h-full w-full my-auto '>
@@ -325,59 +289,21 @@ const newNote = (e) => {
           
         </div>
       </header>
-      <div className='relative flex flex-1 w-full h-full text-foreground '>
+      <div className='relative flex flex-1 w-full h-full text-foreground ' >
 
         {searchModal &&
-        <Animation className='absolute z-20 top-0 left-0 w-full h-full overflow-auto ' animation={fade}>
+        <Animation className='absolute z-20 top-0 left-0 w-full h-full overflow-auto ' animation={fadeSearch}>
           <SearchResults notes={notesList} clickedNote={clickedNote}/>
         </Animation>
         }
         {notesPage &&
-        <Animation className='w-full h-full overflow-auto' animation='fade-in'>
-          <NotesPage notes={notes} clickedNote={clickedNote} onClick={toggleNotesPage}/>
+        <Animation className='w-full h-full overflow-auto' animation={fade}>
+          <NotesPage notes={notes} clickedNote={clickedNote} toggleNotesPage={hideNotesPage}/>
         </Animation>
         }
-        <div className='bg-background w-[300px] shadow-lg border-border border-4 shadow-black z-10 hidden sm:block'>
-              <div className='flex relative w-full justify-center items-center h-20'>
-                <button id='new-note' onClick={newNote} className='bg-input shadow-md shadow-black text-foreground p-2 rounded-lg text-sm hover:bg-primary
-                hover:text-primary-foreground duration-150 '>New note</button>
-                {/* <button onClick={toggleNotesPage} className='absolute top-2 right-2  bg-input shadow-md shadow-black text-foreground p-1 rounded-lg text-sm hover:bg-primary
-                hover:text-primary-foreground duration-150  '>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
-                    </svg>
-
-                </button> */}
-            </div>
-            <Animation id="notes-container" className='border-border border-t-2 overflow-auto h-[73vh] shadow-inner shadow-black '>
-              {notes.map((note) => (
-                <div id={note.key} key={note.key} className='Note flex flex-row border-b-2 border-border cursor-pointer w-full hover:bg-secondary shadow-md duration-150' onClick={clickedNote}>
-                  <h2 id={note.key} className='text-xl w-full overflow-hidden p-4 duration-150' >{note.title}</h2>
-                  <div id={note.key} className='flex justify-end z-10 duration-150'>
-                    <div className='delete-button rounded-full bg-destructive hover:text-black text-destructive-foreground m-auto p-2 mx-1 shadow-xl duration-150'>
-                      <svg id={note.key} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                      className="size-6 delete-button rounded-full m-auto ">
-                        <path id={note.key} strokeLinecap="round" className='delete-button' strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                      </svg>
-                    </div>
-                    
-                  </div>
-                  
-                </div>
-              ))}
-            </Animation>
-          </div>
-          <div className='p-8 w-full bg-background ' onChange={onChangeNote}>
-            <form id='note' className=' h-full flex flex-col bg-card p-4 rounded-xl shadow-lg shadow-black ' onSubmit={addNote}>
-              <input  id='title' type='text' name='title' className='max-w-fit h-10  p-2 text-2xl border-b-2 border-border bg-card' placeholder='Titre' defaultValue={currentNote ? currentNote.title :'' } />
-              <textarea required id='content' name="content" className='flex-1 w-full rounded-md p-4 resize-none bg-card' placeholder='Contenu' defaultValue={currentNote ? currentNote.content :'' }/>
-              <div className='flex justify-end'>
-                <button type='submit' className='w-16 bg-input text-foreground p-2 mt-2 rounded-lg text-sm shadow-lg hover:bg-primary hover:text-primary-foreground duration-150'>Save</button>
-              </div>
-              
-            </form>
-          </div>
-        
+        { !notesPage &&
+          <NoteEditor newNote={newNote} animation={fade} currentNote={currentNote} addNote={addNote} onChangeNote={onChangeNote} notes={notes} toggleNotesPage={showNotesPage} clickedNote={clickedNote}/>
+          }
          
       </div>
     </div>
