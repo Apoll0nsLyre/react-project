@@ -27,26 +27,27 @@ body {
 
 /* Animation fade-in */
 .fade-in {
-    animation: fadeIn 0.15s ease-in-out;
-    transition: all 0.15s ease-in-out;
+    animation: fadeIn 0.2s ease-in-out;
 }
 
 /* Animation fade-out */
 .fade-out {
-    animation: fadeOut 0.15s ease-in-out;
-    transition: all 0.15s ease-in-out;
+    animation: fadeOut 0.2s ease-in-out;
 }
 
 /* Animation slide-in */
 .slide-in {
-    animation: slideIn 0.15s ease-in-out;
-    transition: all 0.15s ease-in-out;
+    animation: slideIn 0.2s ease-in-out;
+
 }
 
 /* Animation slide-out */
 .slide-out {
-    animation: slideOut 0.15s ease-in-out;
-    transition: all 0.15s ease-in-out;
+    animation: slideOut 0.2s ease-in-out;
+}
+
+.extend {
+    animation: extend 0.2s ease-in-out;
 }
 
 @keyframes fadeIn {
@@ -86,6 +87,15 @@ body {
     }
     100% {
         transform: translateY(100%);
+    }
+}
+
+@keyframes extend {
+    0% {
+        width: fit-content;
+    }
+    100% {
+        width: 200px;
     }
 }
 

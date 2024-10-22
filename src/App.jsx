@@ -176,10 +176,12 @@ const newNote = (e) => {
 };
   // Notes clicked state 
   const clickedNote = (e) => {
-    
     e.preventDefault();
     if (searchModal) {
       hideSearchModal();
+    }
+    if (notesPage && !e.target.classList.contains('delete-button')) {
+      hideNotesPage();
     }
     
     const noteClicked = e ? e.target.id : '';
@@ -241,14 +243,14 @@ const newNote = (e) => {
 
     // Set timeout to hide search modal after 5 seconds
     const [fade, setFade] = useState('');
-    const [fadeSearch, setFadeSearch] = useState('fade-in');  
+    const [fadeSearch, setFadeSearch] = useState('');  
 
     const hideSearchModal = () => {
       setFadeSearch('fade-out');
-      console.log(fadeSearch);
       setTimeout(() => {
         setSearchModal(false);
-      }, 140);
+      }, 190);
+      
     }
     useEffect(() => {
       const noteColor = document.getElementsByClassName(`Note`);
