@@ -1,9 +1,11 @@
 import { Animation } from "./animation";
 
-export function NoteEditor({ currentNote, addNote, onChangeNote, newNote, toggleNotesPage, notes, clickedNote, animation}) {
+export function NoteEditor({ sideNotesPage,currentNote, addNote, onChangeNote, newNote, toggleNotesPage, notes, clickedNote, animation, animation2}) {
     return (
       <Animation className=' w-full bg-background flex' animation={animation} onChange={onChangeNote}>
-        <div className='bg-background w-[300px] shadow-lg border-border border-4 shadow-black z-10 hidden sm:block'>
+        {sideNotesPage &&
+          <Animation animation={animation2} id="side-menu" className='bg-background w-[300px] h-full shadow-lg border-border border-4 shadow-black z-10 absolute sm:static'>
+                  <div id="overlay" className=" "></div>
                   <div className='flex relative w-full justify-center items-center h-20'>
                     <button id='new-note' onClick={newNote} className='bg-input shadow-md shadow-black text-foreground p-2 rounded-lg text-sm hover:bg-primary
                     hover:text-primary-foreground duration-150 '>New note</button>
@@ -15,7 +17,7 @@ export function NoteEditor({ currentNote, addNote, onChangeNote, newNote, toggle
   
                     </button>
                 </div>
-                <div id="notes-container" className='border-border border-t-2 overflow-auto h-[73vh] shadow-inner shadow-black '>
+                  <div id="notes-container" className='border-border border-t-2 overflow-auto h-[72vh] shadow-inner shadow-black '>
                   {notes.map((note) => (
                     <div id={note.key} key={note.key} className='Note flex flex-row border-b-2 border-border cursor-pointer w-full hover:bg-secondary shadow-md duration-150' onClick={clickedNote}>
                       <h2 id={note.key} className='text-xl w-full overflow-hidden p-4 duration-150' >{note.title}</h2>
@@ -32,7 +34,7 @@ export function NoteEditor({ currentNote, addNote, onChangeNote, newNote, toggle
                     </div>
                   ))}
                 </div>
-              </div>
+              </Animation>}
               <div className='p-8 w-full bg-background ' onChange={onChangeNote}>
                 <form id='note' className=' h-full flex flex-col bg-card p-4 rounded-xl shadow-lg shadow-black ' onSubmit={addNote}>
                   <input  id='title' type='text' name='title' className='max-w-fit h-10  p-2 text-2xl border-b-2 border-border bg-card' placeholder='Titre' defaultValue={currentNote ? currentNote.title :'' } />

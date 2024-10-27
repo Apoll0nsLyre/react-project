@@ -7,6 +7,7 @@ import { NotesPage } from './components/notes.jsx';
 import { setLocalStorageItem, getLocalStorageItem } from './data/data.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css'
+import { use } from 'react';
 
 
 
@@ -141,10 +142,14 @@ const addNote = (e) => {
 const [deletedNotes, setDeletedNotes] = useState([]);
 const [showModal, setShowModal] = useState(false);
 
+const [fadeModal, setFadeModal] = useState('');
 const cancelModal = (e) => {
   e.preventDefault();
-  setShowModal(false);
-
+  setFadeModal('fade-out');
+  setTimeout(() => {
+    setShowModal(false);
+  }
+  , 190);
 };
 
 const [keyToDelete, setKeyToDelete] = useState('');
@@ -188,6 +193,7 @@ const newNote = (e) => {
     const note = notes.find((note) => note.key === noteClicked);
     if (e.target.classList.contains('delete-button')) {
       setShowModal(true);
+      setFadeModal('fade-in');
       setKeyToDelete(note.key);
       return;
     }
@@ -267,7 +273,8 @@ const newNote = (e) => {
       
     // Notes pages toggle
     const [notesPage, setNotesPage] = useState(false);
-
+    const [sideNotesPage, setSideNotesPage] = useState(true);
+    const [slide, setSlide] = useState('');
     const showNotesPage = () => {
       setFade('fade-in');
       console.log(fade);
@@ -277,15 +284,41 @@ const newNote = (e) => {
       setNotesPage(false);
     }
 
+    const toggleSideNotesPage = () => { 
+      if (sideNotesPage) {
+        setSlide('slide-out');
+        setTimeout(() => {
+          setSideNotesPage(false);
+        }, 290);
+      }
+      else {
+        setSlide('slide-in');
+
+        setSideNotesPage(true);
+        
+      }
+    }
+
+    useEffect(() => {
+      
+      const width = window.innerWidth;
+      if (width > 768) {
+        setSideNotesPage(true);
+      } else {
+        setSideNotesPage(false);
+      }
+    },[ window.innerWidth]);
+
   return (
     <div className='flex flex-col min-h-screen bg-background'>
       { showModal &&
-        
-        <DeleteModal onClick={deleteNote} cancelModal={cancelModal} animation={fade}/>
+      <Animation className='absolute z-40 top-0 left-0 w-full h-full' animation={fadeModal}>
+        <DeleteModal onClick={deleteNote} cancelModal={cancelModal} animation={fadeModal}/>
+      </Animation>
       }
       <header className='flex h-[100px] bg-card w-full m-auto shadow-md shadow-black z-10 text-foreground'>
         <div className='flex h-full w-full my-auto '>
-          <Hamburger className={'my-auto p-4 cursor-pointer block md:hidden'}/>
+          <Hamburger onClick={toggleSideNotesPage} className={'my-auto p-4 cursor-pointer block md:hidden'}/>
           <h1 id='title-page' className='text-3xl my-auto sm:text-left pl-4 hidden sm:block '>Notes</h1>
           <SearchBar searchNote={searchNote} onClick={showSearchModal} searchModal={searchModal} hideSearchModal={hideSearchModal}/>
           
@@ -304,7 +337,7 @@ const newNote = (e) => {
         </Animation>
         }
         { !notesPage &&
-          <NoteEditor newNote={newNote} animation={fade} currentNote={currentNote} addNote={addNote} onChangeNote={onChangeNote} notes={notes} toggleNotesPage={showNotesPage} clickedNote={clickedNote}/>
+          <NoteEditor newNote={newNote} animation2={slide} animation={fade} currentNote={currentNote} addNote={addNote} onChangeNote={onChangeNote} notes={notes} sideNotesPage={sideNotesPage} toggleNotesPage={showNotesPage} clickedNote={clickedNote}/>
           }
          
       </div>

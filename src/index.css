@@ -37,18 +37,24 @@ body {
 
 /* Animation slide-in */
 .slide-in {
-    animation: slideIn 0.2s ease-in-out;
+    animation: slideIn 0.3s ease-in-out;
 
 }
 
 /* Animation slide-out */
 .slide-out {
-    animation: slideOut 0.2s ease-in-out;
+    animation: slideOut 0.3s ease-in-out;
 }
 
 .extend {
-    animation: extend 0.2s ease-in-out;
+    animation: extend 0.15s ease-in-out;
 }
+
+.editor{
+    height: 100vh-(300px);
+}
+
+
 
 @keyframes fadeIn {
     0% {
@@ -74,19 +80,19 @@ body {
 
 @keyframes slideIn {
     0% {
-        transform: translateY(100%);
+        transform: translateX(-100%);
     }
     100% {
-        transform: translateY(0);
+        transform: translateX(0);
     }
 }
 
 @keyframes slideOut {
     0% {
-        transform: translateY(0);
+        transform: translateX(0);
     }
     100% {
-        transform: translateY(100%);
+        transform: translateX(-100%);
     }
 }
 
