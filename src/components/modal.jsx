@@ -1,5 +1,4 @@
 import React from "react";
-import { Animation } from "./animation";
 
 export function DeleteModal({onClick, cancelModal}){
 

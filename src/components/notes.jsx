@@ -1,7 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 export function NotesPage({notes, clickedNote, toggleNotesPage}){
+
+  const [empty, setEmpty] = useState(false);
+  useEffect(() => {
+    if(notes.length === 0){
+      setEmpty(true);
+    } else {
+      setEmpty(false);
+    }
+  }
+  , [notes]);
+
     return (
       <div className='relative flex w-full h-full'>
         <button onClick={toggleNotesPage} className='bg-input w-fit shadow-md shadow-black text-foreground p-1 rounded-lg text-sm hover:bg-primary
@@ -12,7 +23,8 @@ export function NotesPage({notes, clickedNote, toggleNotesPage}){
   
           </button>
         <div id="notes-container" className='relative grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 overflow-auto h-[85vh] w-full z-10'>
-          {notes.map((note) => (
+          { empty && <h1 className='absolute italic top-[40%] right-[50%] translate-x-[50%] translate-y-[50%] z-40 text-3xl text-center text-primary m-auto'>No notes yet.</h1>}
+          {!empty && notes.map((note) => (
             <div id={note.key} key={note.key} onClick={clickedNote} className='flex  flex-col w-56 h-64 cursor-pointer border border-border z-40 m-auto my-2 bg-card
              text-foreground p-3 hover:bg-primary hover:text-primary-foreground duration-150 rounded-xl shadow-md shadow-black'>
               <h1 id={note.key} className='text-xl lg:text-xl text-center font-bold text-wrap pb-2 border-b-2 border-border'>{note.title}</h1>

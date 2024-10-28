@@ -1,6 +1,18 @@
+import { useState,useEffect } from "react";
 import { Animation } from "./animation";
+import { use } from "react";
 
-export function NoteEditor({ sideNotesPage,currentNote, addNote, onChangeNote, newNote, toggleNotesPage, notes, clickedNote, animation, animation2}) {
+export function NoteEditor({ sideNotesPage, currentNote, addNote, onChangeNote, newNote, toggleNotesPage, notes, clickedNote, animation, animation2}) {
+    const [empty, setEmpty] = useState(false);
+    useEffect(() => {
+      if(notes.length === 0){
+        setEmpty(true);
+      } else {
+        setEmpty(false);
+      }
+    }
+    , [notes]);
+
     return (
       <Animation className=' w-full bg-background flex' animation={animation} onChange={onChangeNote}>
         {sideNotesPage &&
@@ -17,7 +29,8 @@ export function NoteEditor({ sideNotesPage,currentNote, addNote, onChangeNote, n
   
                     </button>
                 </div>
-                  <div id="notes-container" className='border-border border-t-2 overflow-auto h-[72vh] shadow-inner shadow-black '>
+                  <div id="notes-container" className='relative border-border border-t-2 overflow-auto h-[72vh] shadow-inner shadow-black '>
+                  { empty && <h1 className='absolute italic top-[30%] right-[50%] translate-x-[50%] translate-y-[50%] z-40 text-3xl text-center text-primary m-auto'>No notes yet.</h1>}
                   {notes.map((note) => (
                     <div id={note.key} key={note.key} className='Note flex flex-row border-b-2 border-border cursor-pointer w-full hover:bg-secondary shadow-md duration-150' onClick={clickedNote}>
                       <h2 id={note.key} className='text-xl w-full overflow-hidden p-4 duration-150' >{note.title}</h2>

@@ -54,6 +54,17 @@ function SearchResults({notes, clickedNote}){
 
 export default function App() {
 
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      setWidth(window.innerWidth);
+    });
+    if (width > 768) {
+      setSideNotesPage(true);
+      setSlide('');
+    }
+  },[window.innerWidth]);
+
   // Notes state and functions to add and remove notes
   const [notes, setNotes] = useState(() => {
     if (localStorage.getItem('notes')) {
@@ -168,8 +179,10 @@ const deleteNote = () => {
 };
 
 // New note function
-const newNote = (e) => {
-  e.preventDefault();
+const newNote = () => {
+  if (sideNotesPage && width < 768) {
+    toggleSideNotesPage();
+  }
   setCurrentNote({
     title: '',
     content: '',
@@ -188,7 +201,9 @@ const newNote = (e) => {
     if (notesPage && !e.target.classList.contains('delete-button')) {
       hideNotesPage();
     }
-    
+    if (sideNotesPage && width < 768) {
+      toggleSideNotesPage();
+    }
     const noteClicked = e ? e.target.id : '';
     const note = notes.find((note) => note.key === noteClicked);
     if (e.target.classList.contains('delete-button')) {
@@ -337,7 +352,8 @@ const newNote = (e) => {
         </Animation>
         }
         { !notesPage &&
-          <NoteEditor newNote={newNote} animation2={slide} animation={fade} currentNote={currentNote} addNote={addNote} onChangeNote={onChangeNote} notes={notes} sideNotesPage={sideNotesPage} toggleNotesPage={showNotesPage} clickedNote={clickedNote}/>
+          <NoteEditor newNote={newNote} animation2={slide} animation={fade} currentNote={currentNote} addNote={addNote}
+           onChangeNote={onChangeNote} notes={notes} sideNotesPage={sideNotesPage} toggleNotesPage={showNotesPage} clickedNote={clickedNote}/>
           }
          
       </div>
